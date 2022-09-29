@@ -20,21 +20,21 @@ try {
 })
 
 // get booking based on room
-app.get("/bookings/:location", async(req,res) => {
-    try {
-        const {location} = req.params
-        const appointment = await pool.query("SELECT * FROM appointments WHERE location = $1 ", [location]);
-        res.json(appointment.rows)
-    } catch (err) {
-        console.error(err.message)
-    }
-    })
+// app.get("/bookings/:location", async(req,res) => {
+//     try {
+//         const {location} = req.params
+//         const appointment = await pool.query("SELECT * FROM appointments WHERE location = $1 ", [location]);
+//         res.json(appointment.rows)
+//     } catch (err) {
+//         console.error(err.message)
+//     }
+//     })
 
 //post a booking
 app.post("/bookings", async (req,res) => {
     try {
-        const {title,location} = (req.body);
-        const newBooking = await pool.query("INSERT INTO appointments (title,location) VALUES ($1,$2) RETURNING *",[title,location])
+        const {id, startdate, enddate, title} = (req.body);
+        const newBooking = await pool.query("INSERT INTO appointmentslowercase (id, startdate, enddate, title) VALUES ($1,$2,$3,$4) RETURNING *",[id, startdate, enddate, title])
         res.json(newBooking.rows[0])
     } catch (err) {
         console.error(err.message)      
