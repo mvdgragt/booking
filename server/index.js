@@ -1,72 +1,59 @@
 const express = require("express");
 const app = express();
-const cors = require("cors")
-const pool = require("./db")
+const cors = require("cors");
+const pool = require("./db");
 
 // Middleware
 app.use(cors()); // Det här gör att port 300 och port 5000 lyssnar på varandra
-app.use(express.json()) // Ge oss tillgång till req.body
+app.use(express.json()); // Ge oss tillgång till req.body
 
 // Routes
 
 // get all bookings
-app.get("/bookings", async (req,res) => {
-try {
+app.get("/", async (req, res) => {
+  try {
     const appointments = await pool.query("SELECT * FROM appointments");
-    res.json(appointments.rows)
-} catch (err) {
-    console.error(err.message)
-}
-})
+    res.json(appointments.rows);
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 // get booking based on room
-// app.get("/bookings/:location", async(req,res) => {
-//     try {
-//         const {location} = req.params
-//         const appointment = await pool.query("SELECT * FROM appointments WHERE location = $1 ", [location]);
-//         res.json(appointment.rows)
-//     } catch (err) {
-//         console.error(err.message)
-//     }
-//     })
+app.get("/bookings/:location", async (req, res) => {
+  try {
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 //post a booking
-app.post("/bookings", async (req,res) => {
-    try {
-        const {id, startdate, enddate, title} = (req.body);
-        const newBooking = await pool.query("INSERT INTO appointmentslowercase (id, startdate, enddate, title) VALUES ($1,$2,$3,$4) RETURNING *",[id, startdate, enddate, title])
-        res.json(newBooking.rows[0])
-    } catch (err) {
-        console.error(err.message)      
-    }
-})
+app.post("/", async (req, res) => {
+  try {
+    // console.log(req.body)
+    const { startDate, endDate, title} = req.body
+    const newAppointment = await pool.query("INSERT INTO appointmentslowercase (startDate, endDate, title) VALUES ($1,$2,$3) RETURNING *", [startDate, endDate, title]);
+    res.json(newAppointment)
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 // change appointment
-app.put("/bookings/:id", async(req,res) => {
-    try {
-       const { id } = req.params;
-       const { title } = req.body;
-       const updateBooking = await pool.query("UPDATE appointments SET title = $1 WHERE id=$2", [title, id]
-       );
-       res.json("appointment title was updated")
-    } catch (err) {
-        console.error(err.message)
-    }
-})
+app.put("/bookings/:id", async (req, res) => {
+  try {
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
 // delete appointment
 
-app.delete("/bookings/:id", async(req,res) => {
-    try {
-        const {id} = req.params;
-        const deleteBooking = await pool.query("DELETE FROM appointments Where id = $1", [id])
-        res.json("appointment was deleted")
-    } catch (err) {
-        console.error(err.message)
-    }
-})
+app.delete("/bookings/:id", async (req, res) => {
+  try {
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 
-app.listen(5000, () => (
-    console.log("Server is starting on port 5000")
-));
-
+app.listen(5000, () => console.log("Server is starting on port 5000"));
