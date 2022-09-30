@@ -30,7 +30,7 @@ app.get("/bookings/:location", async (req, res) => {
 //post a booking
 app.post("/", async (req, res) => {
   try {
-    // console.log(req.body)
+    console.log(req.body)
     const { startDate, endDate, title} = req.body
     const newAppointment = await pool.query("INSERT INTO appointmentslowercase (startDate, endDate, title) VALUES ($1,$2,$3) RETURNING *", [startDate, endDate, title]);
     res.json(newAppointment)

@@ -34,7 +34,7 @@ const Calendar = () => {
 
     if (added) {
       try {
-        // console.log('client site :', added)
+        console.log('client site :', added)
         await fetch("http://localhost:5000/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

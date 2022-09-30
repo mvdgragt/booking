@@ -1,7 +1,7 @@
 CREATE TABLE appointmentslowercase (
     id SERIAL PRIMARY KEY,
-    startdate TIMESTAMP,
-    enddate TIMESTAMP,
+    startdate TIMESTAMPTZ,
+    enddate TIMESTAMPTZ,
     title VARCHAR(255)
 )
 
