@@ -30,7 +30,6 @@ app.get("/bookings/:location", async (req, res) => {
 //post a booking
 app.post("/", async (req, res) => {
   try {
-    console.log(req.body)
     const { startDate, endDate, title} = req.body
     const newAppointment = await pool.query("INSERT INTO appointmentslowercase (startDate, endDate, title) VALUES ($1,$2,$3) RETURNING *", [startDate, endDate, title]);
     res.json(newAppointment)
@@ -49,10 +48,15 @@ app.put("/bookings/:id", async (req, res) => {
 
 // delete appointment
 
-app.delete("/bookings/:id", async (req, res) => {
-  try {
-  } catch (err) {
-    console.error(err.message);
+// app.delete("/bookings/:id", async (req, res) => {
+  app.delete("/:deleted", async (req, res) => {
+    try {
+      const {deleted} = req.params;
+      const deleteAppointment = await pool.query("DELETE FROM appointmentslowercase WHERE id=$1", [deleted])
+
+
+    } catch (err) {
+    console.error("error : ", err.message);
   }
 });
 
