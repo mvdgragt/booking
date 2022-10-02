@@ -7,6 +7,9 @@ import {
 } from "@devexpress/dx-react-scheduler";
 import {
   Scheduler,
+  Toolbar,
+  DateNavigator,
+  TodayButton,
   WeekView,
   Appointments,
   AppointmentForm,
@@ -14,7 +17,7 @@ import {
 
 // import { addBooking } from "../helpers/calendarHelper";
 // import { changedBooking } from "../helpers/calendarHelper";
-import { updateBooking } from "../helpers/calendarHelper";
+// import { updateBooking } from "../helpers/calendarHelper";
 
 const Calendar = () => {
   const [booking, setBooking] = useState([]);
@@ -48,10 +51,16 @@ const Calendar = () => {
       // updatedBooking = changedBooking(changed, updatedBooking);
       // Uppdatera befintlig bokning i postgress
     }
-    if (deleted !== undefined) {
-      updatedBooking = updateBooking(deleted, updatedBooking);
-      // Ta bort bokning från postgress
-    }
+    // if (deleted !== undefined) {
+      if (deleted) {
+    try {
+      await fetch(`http://localhost:5000/${deleted}`, {
+      method: "DELETE"
+      })
+      
+    } catch (err) {
+      console.error(err.message)
+    }    }
 
     setBooking(updatedBooking);
   };
@@ -64,6 +73,9 @@ const Calendar = () => {
     <div id="calendar">
       <Scheduler data={booking}>
         <ViewState />
+        <Toolbar />
+        <DateNavigator />
+        <TodayButton />
         <EditingState onCommitChanges={commitChanges} />
         <IntegratedEditing />
         <WeekView startDayHour={9} endDayHour={18} />
