@@ -20,27 +20,38 @@ app.get("/", async (req, res) => {
 });
 
 // get booking based on room
-app.get("/bookings/:location", async (req, res) => {
-  try {
-  } catch (err) {
-    console.error(err.message);
-  }
-});
+// app.get("/bookings/:location", async (req, res) => {
+//   try {
+//   } catch (err) {
+//     console.error(err.message);
+//   }
+// });
 
 //post a booking
 app.post("/", async (req, res) => {
   try {
-    const { startDate, endDate, title} = req.body
-    const newAppointment = await pool.query("INSERT INTO appointmentslowercase (startDate, endDate, title) VALUES ($1,$2,$3) RETURNING *", [startDate, endDate, title]);
-    res.json(newAppointment)
+    const { startDate, endDate, title } = req.body;
+    const newAppointment = await pool.query(
+      "INSERT INTO appointmentslowercase (startDate, endDate, title) VALUES ($1,$2,$3) RETURNING *",
+      [startDate, endDate, title]
+    );
+    res.json(newAppointment);
   } catch (err) {
     console.error(err.message);
   }
 });
 
 // change appointment
-app.put("/bookings/:id", async (req, res) => {
-  try {
+app.put("/:changed", async (req, res) => {
+    try {
+    //   const {startDate, endDate, title } = req.body;
+    //   const id = parseInt(Object.keys(req.body))
+    //   console.log(id)
+
+    // const updateAppointment = await pool.query("UPDATE appointmentslowercase SET title = $1 WHERE id = $2", [title, id])
+    // res.json("todo was updated!")
+    // res.json(updateAppointment);
+    
   } catch (err) {
     console.error(err.message);
   }
@@ -48,14 +59,14 @@ app.put("/bookings/:id", async (req, res) => {
 
 // delete appointment
 
-// app.delete("/bookings/:id", async (req, res) => {
-  app.delete("/:deleted", async (req, res) => {
-    try {
-      const {deleted} = req.params;
-      const deleteAppointment = await pool.query("DELETE FROM appointmentslowercase WHERE id=$1", [deleted])
-
-
-    } catch (err) {
+app.delete("/:deleted", async (req, res) => {
+  try {
+    const { deleted } = req.params;
+    const deleteAppointment = await pool.query(
+      "DELETE FROM appointmentslowercase WHERE id=$1",
+      [deleted]
+    );
+  } catch (err) {
     console.error("error : ", err.message);
   }
 });

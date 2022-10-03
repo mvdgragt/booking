@@ -35,32 +35,41 @@ const Calendar = () => {
   const commitChanges = async ({ added, changed, deleted }) => {
     let updatedBooking = [booking];
 
-    if (added) {
+    if (added !== undefined) {
       try {
-        console.log('client site :', added)
         await fetch("http://localhost:5000/", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(added)
+          body: JSON.stringify(added),
         });
       } catch (err) {
-        console.error(err.message)
+        console.error(err.message);
       }
     }
     if (changed) {
+      console.log(changed)
+      try {
+        await fetch(`http://localhost:5000/${changed}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(changed),
+        });
+      } catch (err) {
+        console.error(err.message);
+      }
       // updatedBooking = changedBooking(changed, updatedBooking);
       // Uppdatera befintlig bokning i postgress
     }
     // if (deleted !== undefined) {
-      if (deleted) {
-    try {
-      await fetch(`http://localhost:5000/${deleted}`, {
-      method: "DELETE"
-      })
-      
-    } catch (err) {
-      console.error(err.message)
-    }    }
+    if (deleted !== undefined) {
+      try {
+        await fetch(`http://localhost:5000/${deleted}`, {
+          method: "DELETE",
+        });
+      } catch (err) {
+        console.error(err.message);
+      }
+    }
 
     setBooking(updatedBooking);
   };
