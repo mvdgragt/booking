@@ -30,7 +30,8 @@ const Calendar = () => {
   };
   useEffect(() => {
     getAppointments();
-  }, [booking]);
+    // console.log(booking)
+  }, []);
 
   const commitChanges = async ({ added, changed, deleted }) => {
     let updatedBooking = [booking];
@@ -42,18 +43,46 @@ const Calendar = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(added),
         });
+        getAppointments()
       } catch (err) {
         console.error(err.message);
       }
     }
     if (changed) {
-      console.log(changed)
+      let id = (parseInt(Object.keys(changed)))  // extracts id value from changed
+      const currentObject = updatedBooking[0].find(x => x.id === id);  // extracts object with same id as changed
+      const updateObject = Object.values(changed)[0]
+      // console.log("id: ",id)
+      // console.log("currentObject :", currentObject)
+      // console.log("newobjectdata :", updateObject)
+
+      var updateObjectValue = (currentObject, updateObject) => {
+        var destination = Object.assign({}, currentObject);
+        Object.keys(updateObject).forEach(k => {
+          if(k in destination) {
+            destination[k] = updateObject[k];
+          }
+        });
+        return destination;
+      }
+      console.log("updated value :", updateObjectValue(currentObject, updateObject));
+      // console.log(updatedBooking[0])
+      // const asArray = Object.entries(updatedBooking[0]);
+      // console.log(asArray)
+      // const filtered = asArray.filter(([key,value]) => typeof key === '76' );
+
+      // const oneItem = Object.fromEntries(filtered)
+      // console.log(oneItem)
+      // console.log(Object.id(id))
+
       try {
-        await fetch(`http://localhost:5000/${changed}`, {
+        const res = await fetch(`http://localhost:5000/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(changed),
+          body: JSON.stringify(updateObjectValue(currentObject, updateObject)),
         });
+        console.log(res)
+        getAppointments()
       } catch (err) {
         console.error(err.message);
       }
@@ -66,6 +95,7 @@ const Calendar = () => {
         await fetch(`http://localhost:5000/${deleted}`, {
           method: "DELETE",
         });
+        getAppointments()
       } catch (err) {
         console.error(err.message);
       }
