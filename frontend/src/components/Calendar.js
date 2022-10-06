@@ -19,11 +19,12 @@ import {
 // import { changedBooking } from "../helpers/calendarHelper";
 // import { updateBooking } from "../helpers/calendarHelper";
 
+const APIURL = process.env.REACT_APP_API_URL;
 const Calendar = () => {
   const [booking, setBooking] = useState([]);
 
   const getAppointments = async () => {
-    const response = await fetch("http://localhost:5000/");
+    const response = await fetch(APIURL);
     let bookingArray = await response.json();
 
     setBooking(bookingArray);
@@ -38,7 +39,7 @@ const Calendar = () => {
 
     if (added !== undefined) {
       try {
-        await fetch("http://localhost:5000/", {
+        await fetch(APIURL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(added),
@@ -76,7 +77,7 @@ const Calendar = () => {
       // console.log(Object.id(id))
 
       try {
-        const res = await fetch(`http://localhost:5000/${id}`, {
+        const res = await fetch(`${APIURL}${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updateObjectValue(currentObject, updateObject)),
@@ -92,7 +93,7 @@ const Calendar = () => {
     // if (deleted !== undefined) {
     if (deleted !== undefined) {
       try {
-        await fetch(`http://localhost:5000/${deleted}`, {
+        await fetch(`${APIURL}${deleted}`, {
           method: "DELETE",
         });
         getAppointments()
