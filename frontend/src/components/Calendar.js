@@ -13,15 +13,31 @@ import {
   WeekView,
   Appointments,
   AppointmentForm,
+  DragDropProvider,
 } from "@devexpress/dx-react-scheduler-material-ui";
 
-// import { addBooking } from "../helpers/calendarHelper";
-// import { changedBooking } from "../helpers/calendarHelper";
-// import { updateBooking } from "../helpers/calendarHelper";
-
 const APIURL = process.env.REACT_APP_API_URL;
+
 const Calendar = () => {
+  const [editingOptions, setEditingOptions] = React.useState({
+    allowUpdating: true,
+    allowDragging: true,
+    allowResizing: true,
+  });
+
+  const { allowUpdating, allowResizing, allowDragging } = editingOptions;
+
+  const allowDrag = React.useCallback(
+    () => allowDragging && allowUpdating,
+    [allowDragging, allowUpdating]
+  );
+  const allowResize = React.useCallback(
+    () => allowResizing && allowUpdating,
+    [allowResizing, allowUpdating]
+  );
+
   const [booking, setBooking] = useState([]);
+  const rooms = ["room 1", "room 2"];
 
   const getAppointments = async () => {
     const response = await fetch(APIURL);
@@ -44,37 +60,29 @@ const Calendar = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(added),
         });
-        getAppointments()
+        getAppointments();
       } catch (err) {
         console.error(err.message);
       }
     }
     if (changed) {
-      let id = (parseInt(Object.keys(changed)))  // extracts id value from changed
-      const currentObject = updatedBooking[0].find(x => x.id === id);  // extracts object with same id as changed
-      const updateObject = Object.values(changed)[0]
-      // console.log("id: ",id)
-      // console.log("currentObject :", currentObject)
-      // console.log("newobjectdata :", updateObject)
+      let id = parseInt(Object.keys(changed)); // extracts id value from changed
+      const currentObject = updatedBooking[0].find((x) => x.id === id); // extracts object with same id as changed
+      const updateObject = Object.values(changed)[0];
 
       var updateObjectValue = (currentObject, updateObject) => {
         var destination = Object.assign({}, currentObject);
-        Object.keys(updateObject).forEach(k => {
-          if(k in destination) {
+        Object.keys(updateObject).forEach((k) => {
+          if (k in destination) {
             destination[k] = updateObject[k];
           }
         });
         return destination;
-      }
-      console.log("updated value :", updateObjectValue(currentObject, updateObject));
-      // console.log(updatedBooking[0])
-      // const asArray = Object.entries(updatedBooking[0]);
-      // console.log(asArray)
-      // const filtered = asArray.filter(([key,value]) => typeof key === '76' );
-
-      // const oneItem = Object.fromEntries(filtered)
-      // console.log(oneItem)
-      // console.log(Object.id(id))
+      };
+      console.log(
+        "updated value :",
+        updateObjectValue(currentObject, updateObject)
+      );
 
       try {
         const res = await fetch(`${APIURL}${id}`, {
@@ -82,21 +90,18 @@ const Calendar = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(updateObjectValue(currentObject, updateObject)),
         });
-        console.log(res)
-        getAppointments()
+        console.log(res);
+        getAppointments();
       } catch (err) {
         console.error(err.message);
       }
-      // updatedBooking = changedBooking(changed, updatedBooking);
-      // Uppdatera befintlig bokning i postgress
     }
-    // if (deleted !== undefined) {
     if (deleted !== undefined) {
       try {
         await fetch(`${APIURL}${deleted}`, {
           method: "DELETE",
         });
-        getAppointments()
+        getAppointments();
       } catch (err) {
         console.error(err.message);
       }
@@ -105,9 +110,69 @@ const Calendar = () => {
     setBooking(updatedBooking);
   };
 
-  /*
-    useEffect som hämtar data från postgress och setBooking(postgressData)    
-   */
+  const RemovemMultilineTextEditorTextEditor = (props) => {
+    if (props.type === 'multilineTextEditor') {
+      return null;
+    } return <AppointmentForm.TextEditor {...props} />;
+  };
+
+
+  const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
+  
+    return (
+      <AppointmentForm.BasicLayout
+      appointmentData={appointmentData}
+      onFieldChange={onFieldChange}
+      {...restProps}   
+    >
+    </AppointmentForm.BasicLayout>
+      
+    );
+  };
+  const BoolEditor = (props) => {
+    return null;
+  };
+  const LabelComponent = (props) => {
+    
+    if (props.text === "Details") {
+      return (
+        <AppointmentForm.Label {...props} text="Conference Room Booking" />
+      );
+    } else if (props.text === 'More Information') {
+      return null
+    } else if (props.text === '-') {
+      return <AppointmentForm.Label
+      { ...props} />;
+    }
+  };
+  const InputComponent = (props) => {
+
+    if (props.type === "titleTextEditor") {
+      return (
+        <AppointmentForm.TextEditor
+          {...props}
+          type="text"
+          placeholder="Meeting title"
+        />
+      );
+      
+    }
+  };
+
+  const SelectOption = ['Room 1', 'Room 2']
+  const SelectComponent = (props) => {
+        return(
+   <AppointmentForm.SelectProps>
+    
+    <select name="cars" id="cars">
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="mercedes">Mercedes</option>
+  <option value="audi">Audi</option>
+</select>
+   </AppointmentForm.SelectProps>
+)
+  };
 
   return (
     <div id="calendar">
@@ -120,7 +185,15 @@ const Calendar = () => {
         <IntegratedEditing />
         <WeekView startDayHour={9} endDayHour={18} />
         <Appointments />
-        <AppointmentForm />
+        <AppointmentForm
+          BasicoLAyout={BasicLayout}
+          BoolEditor= {BoolEditor}
+          textEditorComponent={RemovemMultilineTextEditorTextEditor}
+          labelComponent = {LabelComponent}
+          InputComponent={InputComponent}
+          SelectComponent={SelectComponent}
+        />
+        <DragDropProvider allowDrag={allowDrag} allowResize={allowResize} />
       </Scheduler>
     </div>
   );
