@@ -37,8 +37,7 @@ const Calendar = () => {
   );
 
   const [booking, setBooking] = useState([]);
-  const rooms = ["room 1", "room 2"];
-
+   
   const getAppointments = async () => {
     const response = await fetch(APIURL);
     let bookingArray = await response.json();
@@ -110,7 +109,8 @@ const Calendar = () => {
     setBooking(updatedBooking);
   };
 
-  const RemovemMultilineTextEditorTextEditor = (props) => {
+  const RemoveMultilineTextEditorTextEditor = (props) => {
+    // console.log(props)
     if (props.type === 'multilineTextEditor') {
       return null;
     } return <AppointmentForm.TextEditor {...props} />;
@@ -126,7 +126,7 @@ const Calendar = () => {
       {...restProps}   
     >
     </AppointmentForm.BasicLayout>
-      
+
     );
   };
   const BoolEditor = (props) => {
@@ -158,20 +158,13 @@ const Calendar = () => {
       
     }
   };
+const availableOptions = ['room1','room2']
+  const SelectComponent = ({type, availableOptions, onValueChanges, value}) => {
+        console.log("SelectComponent :", type, availableOptions, onValueChanges, value)
+        return (
+          <AppointmentForm.SelectOption {...availableOptions} />
+        )
 
-  const SelectOption = ['Room 1', 'Room 2']
-  const SelectComponent = (props) => {
-        return(
-   <AppointmentForm.SelectProps>
-    
-    <select name="cars" id="cars">
-  <option value="volvo">Volvo</option>
-  <option value="saab">Saab</option>
-  <option value="mercedes">Mercedes</option>
-  <option value="audi">Audi</option>
-</select>
-   </AppointmentForm.SelectProps>
-)
   };
 
   return (
@@ -186,9 +179,9 @@ const Calendar = () => {
         <WeekView startDayHour={9} endDayHour={18} />
         <Appointments />
         <AppointmentForm
-          BasicoLAyout={BasicLayout}
+        basicLayoutComponent={BasicLayout}
           BoolEditor= {BoolEditor}
-          textEditorComponent={RemovemMultilineTextEditorTextEditor}
+          textEditorComponent={RemoveMultilineTextEditorTextEditor}
           labelComponent = {LabelComponent}
           InputComponent={InputComponent}
           SelectComponent={SelectComponent}
