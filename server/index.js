@@ -30,10 +30,10 @@ app.get("/", async (req, res) => {
 //post a booking
 app.post("/", async (req, res) => {
   try {
-    const { startDate, endDate, title } = req.body;
+    const { startDate, endDate, title, locations } = req.body;
     const newAppointment = await pool.query(
-      "INSERT INTO appointmentslowercase (startDate, endDate, title) VALUES ($1,$2,$3) RETURNING *",
-      [startDate, endDate, title]
+      "INSERT INTO appointmentslowercase (startDate, endDate, title, locations) VALUES ($1,$2,$3, $4) RETURNING *",
+      [startDate, endDate, title, locations]
     );
     res.json(newAppointment);
   } catch (err) {
@@ -48,7 +48,7 @@ app.put("/:id", async (req, res) => {
       const {id} = req.params
       // console.log("id :", id)
     // parseInt(Object.keys(req.body)) = req.params
-    const {startDate, endDate, title} =req.body
+    const {startDate, endDate, title, locations} =req.body
     // const id = parseInt(Object.keys(req.body))
     // console.log("id :", id)
     // const object = Object.values(req.body)
@@ -73,7 +73,7 @@ app.put("/:id", async (req, res) => {
     //   const id = parseInt(Object.keys(req.body))
     //   console.log(id)
 
-    const updateAppointment = await pool.query("UPDATE appointmentslowercase SET startDate = $1, endDate = $2, title = $3 WHERE id = $4", [startDate, endDate, title, id])
+    const updateAppointment = await pool.query("UPDATE appointmentslowercase SET startDate = $1, endDate = $2, title = $3, locations = $4 WHERE id = $5", [startDate, endDate, title, locations, id])
     // console.log(updateAppointment);
     // res.json(updateAppointment)
     res.json(" The appointment was updated")    

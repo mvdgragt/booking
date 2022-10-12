@@ -13,7 +13,7 @@ CREATE TABLE locations (
 
 INSERT INTO locations (
     id,
-    "locations"
+    locations
 )
 
 VALUES (

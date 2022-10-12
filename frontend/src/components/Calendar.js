@@ -14,6 +14,7 @@ import {
   Appointments,
   AppointmentForm,
   DragDropProvider,
+  Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
 
 const APIURL = process.env.REACT_APP_API_URL;
@@ -37,7 +38,7 @@ const Calendar = () => {
   );
 
   const [booking, setBooking] = useState([]);
-   
+
   const getAppointments = async () => {
     const response = await fetch(APIURL);
     let bookingArray = await response.json();
@@ -48,6 +49,8 @@ const Calendar = () => {
     getAppointments();
     // console.log(booking)
   }, []);
+    console.log(booking)
+  
 
   const commitChanges = async ({ added, changed, deleted }) => {
     let updatedBooking = [booking];
@@ -109,65 +112,59 @@ const Calendar = () => {
     setBooking(updatedBooking);
   };
 
-  const RemoveMultilineTextEditorTextEditor = (props) => {
-    // console.log(props)
-    if (props.type === 'multilineTextEditor') {
-      return null;
-    } return <AppointmentForm.TextEditor {...props} />;
-  };
-
-
   const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
-  
+
+    const onCustomFieldChange = (target, nextValue) => {
+      if (target === "locations") {
+        if (nextValue !== -1) onFieldChange({ [target]: nextValue });
+      } else {
+        onFieldChange({ [target]: nextValue });
+      }
+    };
+
+
     return (
+      <>
       <AppointmentForm.BasicLayout
-      appointmentData={appointmentData}
-      onFieldChange={onFieldChange}
-      {...restProps}   
-    >
-    </AppointmentForm.BasicLayout>
+        appointmentData={appointmentData}
+        onFieldChange={onFieldChange}
+        {...restProps}
+      >
 
-    );
-  };
-  const BoolEditor = (props) => {
-    return null;
-  };
-  const LabelComponent = (props) => {
-    
-    if (props.text === "Details") {
-      return (
-        <AppointmentForm.Label {...props} text="Conference Room Booking" />
-      );
-    } else if (props.text === 'More Information') {
-      return null
-    } else if (props.text === '-') {
-      return <AppointmentForm.Label
-      { ...props} />;
-    }
-  };
-  const InputComponent = (props) => {
-
-    if (props.type === "titleTextEditor") {
-      return (
-        <AppointmentForm.TextEditor
-          {...props}
-          type="text"
-          placeholder="Meeting title"
+        
+        <AppointmentForm.Label text="Room selector" type="titleLabel" />
+        <AppointmentForm.Select
+          value={appointmentData.locations || -1}
+          type="filledSelect"
+          availableOptions={[
+            {
+              id: -1,
+              text: "Select",
+            },
+            {
+              id: 1,
+              text: "Room 1",
+            },
+            {
+              id: 2,
+              text: "Room 2",
+            },
+          ]}
+          readOnly={false}
+          onValueChange={(value) => onCustomFieldChange("locations", value)}
+          
         />
-      );
-      
-    }
-  };
-const availableOptions = ['room1','room2']
-  const SelectComponent = ({type, availableOptions, onValueChanges, value}) => {
-        console.log("SelectComponent :", type, availableOptions, onValueChanges, value)
-        return (
-          <AppointmentForm.SelectOption {...availableOptions} />
-        )
 
-  };
-
-  return (
+        <AppointmentForm.Label text="Meeting participants" type="title" />
+        <AppointmentForm.TextEditor
+          value={appointmentData.participants}
+          onValueChange={(value) => onCustomFieldChange("participants", value)}
+          placeholder="Participants"
+        />
+      </AppointmentForm.BasicLayout>
+      </>
+    );
+  };  return (
     <div id="calendar">
       <Scheduler data={booking}>
         <ViewState />
@@ -177,14 +174,11 @@ const availableOptions = ['room1','room2']
         <EditingState onCommitChanges={commitChanges} />
         <IntegratedEditing />
         <WeekView startDayHour={9} endDayHour={18} />
-        <Appointments />
+        <Appointments 
+        
+        />
         <AppointmentForm
-        basicLayoutComponent={BasicLayout}
-          BoolEditor= {BoolEditor}
-          textEditorComponent={RemoveMultilineTextEditorTextEditor}
-          labelComponent = {LabelComponent}
-          InputComponent={InputComponent}
-          SelectComponent={SelectComponent}
+          basicLayoutComponent={BasicLayout}
         />
         <DragDropProvider allowDrag={allowDrag} allowResize={allowResize} />
       </Scheduler>

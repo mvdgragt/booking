@@ -1,0 +1,54 @@
+  const FormBasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
+
+    const onCustomFieldChange = (target, nextValue) => {
+      if (target === "location") {
+        if (nextValue !== -1) onFieldChange({ [target]: nextValue });
+      } else {
+        onFieldChange({ [target]: nextValue });
+      }
+    };
+
+
+    return (
+      <>
+      <AppointmentForm.BasicLayout
+        appointmentData={appointmentData}
+        onFieldChange={onFieldChange}
+        {...restProps}
+      >
+
+        
+        <AppointmentForm.Label text="Room selector" type="titleLabel" />
+        <AppointmentForm.Select
+          value={appointmentData.location || -1}
+          type="filledSelect"
+          availableOptions={[
+            {
+              id: -1,
+              text: "Select",
+            },
+            {
+              id: 1,
+              text: "Room 1",
+            },
+            {
+              id: 2,
+              text: "Room 2",
+            },
+          ]}
+          readOnly={false}
+          onValueChange={(value) => onCustomFieldChange("location", value)}
+        />
+
+        <AppointmentForm.Label text="Meeting participants" type="title" />
+        <AppointmentForm.TextEditor
+          value={appointmentData.participants}
+          onValueChange={(value) => onCustomFieldChange("participants", value)}
+          placeholder="Participants"
+        />
+      </AppointmentForm.BasicLayout>
+      </>
+    );
+  };
+
+  export default FormBasicLayout
