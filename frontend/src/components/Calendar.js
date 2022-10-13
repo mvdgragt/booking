@@ -16,8 +16,25 @@ import {
   DragDropProvider,
   Resources,
 } from "@devexpress/dx-react-scheduler-material-ui";
+import { teal, orange, red } from "@mui/material/colors";
 
 const APIURL = process.env.REACT_APP_API_URL;
+
+const location = ["Room 1", "Room 2", "Room 3"];
+const locationshort = [1, 2, 3];
+const resources = [
+  {
+    fieldName: "location",
+    title: "Location",
+    instances: [
+      { id: location[0], text: location[0], color: teal },
+      { id: location[1], text: location[1], color: orange },
+      { id: location[2], text: location[2], color: red },
+    ],
+  },
+];
+
+
 
 const Calendar = () => {
   const [editingOptions, setEditingOptions] = React.useState({
@@ -49,8 +66,7 @@ const Calendar = () => {
     getAppointments();
     // console.log(booking)
   }, []);
-    console.log(booking)
-  
+  console.log(booking);
 
   const commitChanges = async ({ added, changed, deleted }) => {
     let updatedBooking = [booking];
@@ -113,7 +129,6 @@ const Calendar = () => {
   };
 
   const BasicLayout = ({ onFieldChange, appointmentData, ...restProps }) => {
-
     const onCustomFieldChange = (target, nextValue) => {
       if (target === "locations") {
         if (nextValue !== -1) onFieldChange({ [target]: nextValue });
@@ -122,49 +137,48 @@ const Calendar = () => {
       }
     };
 
-
     return (
       <>
-      <AppointmentForm.BasicLayout
-        appointmentData={appointmentData}
-        onFieldChange={onFieldChange}
-        {...restProps}
-      >
-
-        
-        <AppointmentForm.Label text="Room selector" type="titleLabel" />
-        <AppointmentForm.Select
-          value={appointmentData.locations || -1}
-          type="filledSelect"
-          availableOptions={[
-            {
-              id: -1,
-              text: "Select",
-            },
-            {
-              id: 1,
-              text: "Room 1",
-            },
-            {
-              id: 2,
-              text: "Room 2",
-            },
-          ]}
-          readOnly={false}
-          onValueChange={(value) => onCustomFieldChange("locations", value)}
-          
-        />
-
-        <AppointmentForm.Label text="Meeting participants" type="title" />
-        <AppointmentForm.TextEditor
-          value={appointmentData.participants}
-          onValueChange={(value) => onCustomFieldChange("participants", value)}
-          placeholder="Participants"
-        />
-      </AppointmentForm.BasicLayout>
+        <AppointmentForm.BasicLayout
+          appointmentData={appointmentData}
+          onFieldChange={onFieldChange}
+          {...restProps}
+        >
+          <AppointmentForm.Label text="Room selector" type="titleLabel" />
+          {/* <AppointmentForm.Select
+            value={appointmentData.locations || -1}
+            type="filledSelect"
+            availableOptions={[
+              {
+                id: -1,
+                text: "Select",
+              },
+              {
+                id: 1,
+                text: "Room 1",
+              },
+              {
+                id: 2,
+                text: "Room 2",
+              },
+            ]}
+            readOnly={false}
+            onValueChange={(value) => onCustomFieldChange("locations", value)}
+          /> */}
+          <AppointmentForm.Label text="Meeting participants" type="title" />
+          <AppointmentForm.TextEditor
+            value={appointmentData.participants}
+            onValueChange={(value) =>
+              onCustomFieldChange("participants", value)
+            }
+            placeholder="Participants"
+          />
+        </AppointmentForm.BasicLayout>
       </>
     );
-  };  return (
+  };
+
+  return (
     <div id="calendar">
       <Scheduler data={booking}>
         <ViewState />
@@ -174,12 +188,15 @@ const Calendar = () => {
         <EditingState onCommitChanges={commitChanges} />
         <IntegratedEditing />
         <WeekView startDayHour={9} endDayHour={18} />
-        <Appointments 
-        
-        />
-        <AppointmentForm
-          basicLayoutComponent={BasicLayout}
-        />
+        <Appointments   />
+           {/* <AppointmentTooltip
+            headerComponent={Header}
+            contentComponent={Content}
+            commandButtonComponent={CommandButton}
+            showCloseButton
+          /> */}
+        <Resources data={resources} />
+        <AppointmentForm basicLayoutComponent={BasicLayout} />
         <DragDropProvider allowDrag={allowDrag} allowResize={allowResize} />
       </Scheduler>
     </div>
